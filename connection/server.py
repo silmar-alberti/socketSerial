@@ -1,36 +1,32 @@
 import socket
-# host = ''        # Symbolic name meaning all available interfaces
-# port = 12345     # Arbitrary non-privileged port
-# s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# s.bind((host, port))
-# s.listen(1)
-# conn, addr = s.accept()
-# print('Connected by', addr)
-
+# import threading
 class Server():
     port = 12345
     host = ''
+    conn=None
+    addr = None
+    # use_conn = threading.Lock()
 
-    def __init__(self):
+
+    def iniciar(self):
+
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Server.use_conn.acquire()
         self.s.bind((self.host,self.port))
-        self.s.listen(1)
-    # def listen(self):
-    #     self.s.listen(1)
+        # Server.use_conn.release()
 
     def recv(self):
+        # Server.use_conn.acquire()
+        self.s.listen(1)
         self.conn,self.addr = self.s.accept()
-        return self.conn.recv(1024)
-    def send(self,data):
-        self.conn.sendall(data)
+        return self.conn , self.addr,self.conn.recv(1024)
+        # Server.use_conn.release()
 
-    def __del__(self):
+    def send(self,data):
+        # Server.use_conn.acquire()
+        self.conn.sendall(data)
+        # Server.use_conn.release()
+
+    def close(self):
         self.conn.close()
 
-# while True:
-#     data = conn.recv(1024)
-#
-#     if not data: break
-#     conn.sendall(data)
-#     print (repr(data))
-# conn.close()
